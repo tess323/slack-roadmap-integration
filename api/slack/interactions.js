@@ -30,6 +30,14 @@ export default async function handler(req, res) {
     return;
   }
 
+  // Slack retries a delivery (up to twice more) if it doesn't get a 200 within ~3s,
+  // e.g. during a cold start. The original delivery is still being processed, so
+  // reprocessing a retry would duplicate the Sheet write. Ack and bail out.
+  if (req.headers['x-slack-retry-num']) {
+    res.status(200).send('');
+    return;
+  }
+
   // Interaction payloads arrive URL-encoded as payload=<json>
   const params = new URLSearchParams(rawBody);
   const payload = JSON.parse(params.get('payload'));

@@ -38,7 +38,14 @@ export default async function handler(req, res) {
     return;
   }
 
-  // 3. Acknowledge fast (Slack requires a 200 within 3s), then do work.
+  // 3. Slack retries a delivery (up to twice more) if it doesn't get a 200 within ~3s.
+  // The original delivery is still being processed, so just ack and skip reprocessing.
+  if (req.headers['x-slack-retry-num']) {
+    res.status(200).send('');
+    return;
+  }
+
+  // 4. Acknowledge fast (Slack requires a 200 within 3s), then do work.
   res.status(200).send('');
 
   try {

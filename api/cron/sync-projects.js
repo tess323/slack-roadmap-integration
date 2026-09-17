@@ -8,8 +8,8 @@
 import { replaceProjects } from '../../lib/sheets.js';
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
-const DATABASE_ID = process.env.NOTION_DATABASE_ID;
-const NOTION_VERSION = '2022-06-28';
+const DATA_SOURCE_ID = process.env.NOTION_DATA_SOURCE_ID;
+const NOTION_VERSION = '2025-09-03';
 
 // Property names in the Roadmap DB
 const TITLE_PROP = 'Project name';
@@ -23,7 +23,7 @@ async function queryNotion() {
     const body = { page_size: 100 };
     if (cursor) body.start_cursor = cursor;
 
-    const resp = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
+    const resp = await fetch(`https://api.notion.com/v1/data_sources/${DATA_SOURCE_ID}/query`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${NOTION_TOKEN}`,
